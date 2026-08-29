@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Optional, Any
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, StrictBool
 
 
 # ---- Auth / accounts (REQ-01) ----
@@ -10,7 +10,11 @@ class LoginAuditRequest(BaseModel):
     (success or failure) so we get a server-side AuditLog entry — FR-1.9.
     This is an MVP stand-in for a Supabase Auth webhook; revisit later."""
     email: str
-    success: bool
+    # Fixes Bug 2: plain `bool` lets pydantic coerce 0/1/"true"/etc into a
+    # boolean, so malformed values silently became valid and still logged a
+    # 200. StrictBool only accepts an actual JSON true/false, so anything
+    # else now correctly fails validation with a 422.
+    success: StrictBool
     reason: Optional[str] = None
 
 
