@@ -23,7 +23,7 @@ app.include_router(auth.router)
 app.include_router(citizen.router)
 
 
-@app.get("/")
+@app.api_route("/", methods=["GET", "HEAD"])
 def health_check():
     return {"status": "ok"}
 
